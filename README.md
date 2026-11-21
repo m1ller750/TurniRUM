@@ -1,6 +1,6 @@
 # 🏆 TurniRUM
 
-**Tournaments that run themselves.** TurniRUM is a tournament platform for esports and sports:
+**Tournaments that run themselves.** TurniRUM is an open-source tournament platform for esports and sports:
 organizers host free or paid tournaments, players register teams and pay entry fees with **PayPal**,
 **Google Gemini** picks the format, seeds the teams and builds the schedule, and prizes are paid to the winners'
 PayPal accounts automatically. The platform earns 10% of every paid tournament.
@@ -10,6 +10,7 @@ PayPal accounts automatically. The platform earns 10% of every paid tournament.
 | 🌐 **Live site** | [open TurniRUM](https://raw.githack.com/m1ller750/TurniRUM/claude/turnirum-tournament-platform-bq6cmd/site/index.html) (PayPal sandbox — no real money) |
 | 🎬 **Demo video** | [docs/demo/TurniRUM-demo.mp4](docs/demo/TurniRUM-demo.mp4) — 2:50, English voice-over and subtitles ([.srt](docs/demo/TurniRUM-demo.srt)) |
 | 🧰 **Built with** | Supabase (Postgres, RLS, Auth, Edge Functions), Google Gemini, PayPal Checkout and Payouts, Brevo, vanilla JS; desktop: Flask + SQLite |
+| ⚖️ **License** | [MIT](LICENSE) |
 
 ## The problem
 
