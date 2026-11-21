@@ -1,6 +1,6 @@
 # 🏆 TurniRUM
 
-**Tournaments that run themselves.** TurniRUM is an open-source tournament platform for esports and sports:
+**Tournaments that run themselves.** TurniRUM is a tournament platform for esports and sports:
 organizers host free or paid tournaments, players register teams and pay entry fees with **PayPal**,
 **Google Gemini** picks the format, seeds the teams and builds the schedule, and prizes are paid to the winners'
 PayPal accounts automatically. The platform earns 10% of every paid tournament.
@@ -8,10 +8,8 @@ PayPal accounts automatically. The platform earns 10% of every paid tournament.
 | | |
 |---|---|
 | 🌐 **Live site** | [open TurniRUM](https://raw.githack.com/m1ller750/TurniRUM/claude/turnirum-tournament-platform-bq6cmd/site/index.html) (PayPal sandbox — no real money) |
-| 📖 **Guide** | [docs/GUIDE.md](docs/GUIDE.md) — also on the site under **Guide** |
-| 🎬 **Demo video** | [docs/demo/TurniRUM-demo.mp4](docs/demo/TurniRUM-demo.mp4) — 2:50, English voice-over and subtitles ([.srt](docs/demo/TurniRUM-demo.srt), [how it was made](tools/demo-video/)) |
-| 🧰 **Built with** | [AI models, APIs and tools](docs/GUIDE.md#built-with-ai-models-apis-and-tools) |
-| ⚖️ **License** | [MIT](LICENSE) |
+| 🎬 **Demo video** | [docs/demo/TurniRUM-demo.mp4](docs/demo/TurniRUM-demo.mp4) — 2:50, English voice-over and subtitles ([.srt](docs/demo/TurniRUM-demo.srt)) |
+| 🧰 **Built with** | Supabase (Postgres, RLS, Auth, Edge Functions), Google Gemini, PayPal Checkout and Payouts, Brevo, vanilla JS; desktop: Flask + SQLite |
 
 ## The problem
 
@@ -43,9 +41,7 @@ The repository also has an offline desktop version (Russian, Flask + SQLite) —
 Supabase Postgres + Row Level Security + RPC functions · Supabase Auth · one Supabase Edge Function (`api`)
 for registration and PayPal · PayPal Checkout (sandbox).
 
-**Hosting:** `site/` is a static site — it can be served as is (githack, any static host), or as one file:
-`python tools/build_netlify.py` builds `release/netlify/index.html` with everything inline for Netlify.
-`site/` also has a `Dockerfile`, `Caddyfile` and `railway.json` for hosting it on Railway.
+**Hosting:** `site/` is a static site; `release/netlify/index.html` is the same site in one file, and `site/` has a Dockerfile for Railway.
 
 ### Roles
 
@@ -109,22 +105,6 @@ money back into the wallet. Payout statuses are refreshed from PayPal when a wal
 A team that paid can only be removed with a refund, and the entry fee and prizes are locked once a team has paid.
 PayPal's own fees (per payment and per payout) are paid by the platform account.
 
-### Turning on PayPal
-
-The site works without PayPal keys, but paid registrations show "payments are being set up".
-To enable them, set two Edge Function secrets in Supabase (Project → Edge Functions → Secrets):
-
-| Secret | Value |
-|--------|-------|
-| `PAYPAL_CLIENT_ID` | Client ID of a PayPal REST app (developer.paypal.com → Apps & Credentials → Sandbox) |
-| `PAYPAL_CLIENT_SECRET` | Secret of the same app |
-| `PAYPAL_ENV` | optional, `sandbox` (default) or `live` |
-
-No redeploy is needed. If the secrets are not set, the function falls back to the rows `paypal_client_id`,
-`paypal_client_secret` and `paypal_env` of the `app_settings` table, which only the server can read (that is
-where the current sandbox keys are). The PayPal app needs the **Payouts** feature for prizes and withdrawals.
-Use a sandbox *personal* test account (Developer dashboard → Testing tools → Sandbox accounts) to pay on the site.
-
 ### Demo accounts
 
 The database starts without tournaments: everything in the catalog is created by real organizers.
@@ -151,22 +131,10 @@ supabase/migrations/      schema, RLS policies and RPC functions (wallets and pr
 supabase/functions/api/   Edge Function: registration, creator password, PayPal orders and captures,
                           prize payouts, withdrawals, refunds, brackets, AI helpers and notifications
 release/netlify/index.html  the whole site in one file (for Netlify), rebuilt by tools/build_netlify.py
-docs/GUIDE.md             user guide + the list of AI models, APIs and tools
 docs/demo/                demo video with English voice-over and subtitles (.srt)
 tools/demo-video/         the scripted pipeline that records and edits the demo video
 site-tests/               browser tests (Playwright) against an in-memory mock of api.js
 ```
-
-### Tests
-
-```bash
-pip install playwright && python site-tests/run_ui_tests.py   # UI checks with a mocked backend
-node site-tests/engine_test.mjs                                 # random brackets of every format played to the end
-```
-
-The database logic (permissions, RPC validation, PayPal admission and idempotency, settlement and wallets) was
-checked directly against the Supabase project, and the whole money flow (card payment → admission → finish →
-prize payouts → withdrawal → refund) ran against the real PayPal sandbox.
 
 ---
 
@@ -174,4 +142,4 @@ prize payouts → withdrawal → refund) ran against the real PayPal sandbox.
 
 `release/TurniRUM.exe` starts a local server and opens the browser — nothing to install.
 Rebuilt automatically by `.github/workflows/build-exe.yml` when the Python code changes.
-For development: `pip install -r requirements.txt && python run.py`, tests: `pytest`.
+
